@@ -1,8 +1,8 @@
-# 🐳 Martian AI - Docker Setup & Deployment
+# Martian AI - Docker Setup & Deployment
 
 A complete Docker containerized setup for the Martian AI full-stack application with intelligent slide generation, AI humanization, and academic tools.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Windows (PowerShell)
 ```powershell
@@ -25,7 +25,7 @@ chmod +x docker-start.sh
 docker-compose up --build
 ```
 
-## 📍 Access Points
+## Access Points
 
 Once running, access:
 
@@ -36,7 +36,7 @@ Once running, access:
 | **API Docs** | http://localhost:8000/docs | Swagger interactive documentation |
 | **ReDoc** | http://localhost:8000/redoc | Alternative API documentation |
 
-## 🏗️ Architecture
+## Architecture
 
 ### Services
 
@@ -77,29 +77,29 @@ Once running, access:
   - `openai-whisper` - Audio transcription
   - `LibreOffice` - PDF conversion
 - **Features**:
-  - ✅ Intelligent slide generation from text/documents
-  - ✅ Adaptive content chunking
-  - ✅ Smart template selection
-  - ✅ PPTX + PDF export
-  - ✅ Audio transcription
-  - ✅ Text summarization
-  - ✅ AI humanization
-  - ✅ JWT authentication
-  - ✅ SQLite persistence
+  - Intelligent slide generation from text/documents
+  - Adaptive content chunking
+  - Smart template selection
+  - PPTX + PDF export
+  - Audio transcription
+  - Text summarization
+  - AI humanization
+  - JWT authentication
+  - SQLite persistence
 
 #### Frontend Container
 - **Image**: Node.js 18 alpine + Next.js
 - **Port**: 3000
 - **Build Strategy**: Multi-stage (optimized for production)
 - **Features**:
-  - ✅ Responsive React UI
-  - ✅ Tailwind CSS styling
-  - ✅ Four main tool dashboards
-  - ✅ File upload handling
-  - ✅ User authentication
-  - ✅ Real-time status updates
+  - Responsive React UI
+  - Tailwind CSS styling
+  - Four main tool dashboards
+  - File upload handling
+  - User authentication
+  - Real-time status updates
 
-## 📋 Available Commands
+## Available Commands
 
 ### Startup Variations
 
@@ -189,7 +189,7 @@ docker system prune -a
 docker system df
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -218,7 +218,7 @@ docker-compose restart backend
 docker-compose up --build frontend
 ```
 
-## 📊 Health Checks
+## Health Checks
 
 Both services have automated health checks:
 
@@ -235,7 +235,7 @@ Check status:
 docker-compose ps
 ```
 
-## 🧪 Testing Features
+## Testing Features
 
 ### Test Slide Generation
 
@@ -271,7 +271,7 @@ curl -X POST http://localhost:8000/summarize \
   -d '{"text": "Your text", "mode": "short"}'
 ```
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### Issue: Containers won't start
 
@@ -328,7 +328,7 @@ docker exec martian-ai-frontend wget -O- http://backend:8000/
 # Check docker-compose.yml networks configuration
 ```
 
-## 📈 Performance Tuning
+## Performance Tuning
 
 ### Build Optimization
 
@@ -366,7 +366,7 @@ volumes:
     driver: local
 ```
 
-## 🔐 Security Considerations
+## Security Considerations
 
 ### For Production
 
@@ -404,7 +404,7 @@ volumes:
    # Add .env to .gitignore
    ```
 
-## 📦 Deployment Options
+## Deployment Options
 
 ### Local Docker
 ```bash
@@ -441,14 +441,14 @@ kompose convert -f docker-compose.yml
 # Deploy with kubectl
 ```
 
-## 📚 Additional Resources
+## Additional Resources
 
 - [Docker Documentation](https://docs.docker.com/)
 - [Docker Compose Reference](https://docs.docker.com/compose/compose-file/)
 - [FastAPI Deployment](https://fastapi.tiangolo.com/deployment/docker/)
 - [Next.js Docker Guide](https://nextjs.org/docs/deployment/docker)
 
-## 🤝 Support
+## Support
 
 For issues:
 1. Check logs: `docker-compose logs -f`
@@ -456,7 +456,7 @@ For issues:
 3. Check resources: `docker stats`
 4. Inspect services: `docker-compose ps`
 
-## 📝 License
+## License
 
 See LICENSE file in project root.
 
