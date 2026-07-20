@@ -1,4 +1,4 @@
-# 🎯 Getting Started - Visual Guide
+# Getting Started - Visual Guide
 
 ## Step 1: Prerequisites ✓
 
@@ -39,12 +39,12 @@ cd ~/path/to/martian\ ai
 
 ## Step 3: Start Application
 
-### Option A: PowerShell Script (Windows) 🟦
+### Option A: PowerShell Script (Windows) 
 ```powershell
 .\docker-start.ps1 -Build
 ```
 
-### Option B: Bash Script (macOS/Linux) 🟧
+### Option B: Bash Script (macOS/Linux) 
 ```bash
 chmod +x docker-start.sh
 ./docker-start.sh --build
@@ -87,10 +87,10 @@ http://localhost:3000
 ```
 
 You should see the Martian AI dashboard with:
-- 🧠 Proof AI
-- 📄 Summarizer  
-- 🎤 Smart Notes
-- 🎯 **Slide Generator** ← NEW!
+- Proof AI
+- Summarizer  
+- Smart Notes
+- **Slide Generator** ← NEW!
 
 ### Backend API
 ```
@@ -184,7 +184,7 @@ docker-compose down -v
 
 ---
 
-## 🎯 Testing Different Inputs
+## Testing Different Inputs
 
 ### Test 1: Short Text (Academic)
 ```json
@@ -222,21 +222,21 @@ curl -X POST http://localhost:8000/generate-slides-from-text \
 
 ---
 
-## 📊 Understanding Output
+## Understanding Output
 
 ### Generated Files
 
 **PPTX File:**
-- ✅ Editable in PowerPoint, Google Slides, LibreOffice
-- ✅ Professional formatting
-- ✅ Ready to present or customize
-- ✅ ~200-500 KB typical size
+- Editable in PowerPoint, Google Slides, LibreOffice
+- Professional formatting
+- Ready to present or customize
+- ~200-500 KB typical size
 
 **PDF File:**
-- ✅ Print-ready
-- ✅ Shareable
-- ✅ View-only (or print-to-edit)
-- ✅ ~300-800 KB typical size
+- Print-ready
+- Shareable
+- View-only (or print-to-edit)
+- ~300-800 KB typical size
 
 ### Presentation Structure
 Every generated presentation includes:
@@ -246,7 +246,7 @@ Every generated presentation includes:
 
 ---
 
-## 🆘 Troubleshooting
+## Troubleshooting
 
 ### Issue: "Port 3000 already in use"
 
@@ -303,7 +303,7 @@ docker-compose restart
 
 ---
 
-## 💡 Pro Tips
+## Pro Tips
 
 ### Tip 1: Live Logs
 ```bash
@@ -341,7 +341,7 @@ docker exec martian-ai-backend python -c "print('Hello')"
 
 ---
 
-## 🎓 Next Steps
+## Next Steps
 
 ### 1. Explore Features
 - [ ] Generate slides from text
@@ -370,7 +370,7 @@ docker exec martian-ai-backend python -c "print('Hello')"
 
 ---
 
-## 📞 Need Help?
+## Need Help?
 
 ### Documentation
 - **DOCKER_GUIDE.md** - Complete operations guide
@@ -397,27 +397,3 @@ docker-compose down -v && docker-compose up --build
 ```
 
 ---
-
-## 🚀 You're All Set!
-
-Your Martian AI application is now:
-- ✅ Fully containerized
-- ✅ Running locally
-- ✅ Ready to use
-- ✅ Easy to scale
-- ✅ Simple to deploy
-
-### Quick Reference
-| Task | Command |
-|------|---------|
-| Start | `docker-compose up --build` |
-| Stop | `Ctrl+C` or `docker-compose down` |
-| Logs | `docker-compose logs -f` |
-| Status | `docker-compose ps` |
-| Shell | `docker exec -it martian-ai-backend bash` |
-
----
-
-**Happy Presenting! 🎉**
-
-Generated presentations are waiting to be created at **http://localhost:3000**
