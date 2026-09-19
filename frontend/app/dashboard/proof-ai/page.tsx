@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress"
 import { useState, useMemo } from "react"
 import { Sparkles, Copy, Download, Loader2, FileText, Target, TrendingUp } from "lucide-react"
 import { motion } from "framer-motion"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 interface ProofreadResult {
   original_text: string
@@ -26,31 +26,26 @@ export default function ProofAIPage() {
   const [inputText, setInputText] = useState("")
   const [result, setResult] = useState<ProofreadResult | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
-  const { toast } = useToast()
 
   // Count words in real-time
   const wordCount = useMemo(() => {
     return inputText.trim() ? inputText.trim().split(/\s+/).length : 0
   }, [inputText])
 
-  const isWithinWordLimit = wordCount >= 50 && wordCount <= 1500
-  const wordLimitColor = wordCount < 50 ? "text-red-500" : wordCount > 1500 ? "text-red-500" : "text-green-500"
+  const isWithinWordLimit = wordCount >= 50 && wordCount <= 1000
+  const wordLimitColor = wordCount < 50 ? "text-red-500" : wordCount > 1000 ? "text-red-500" : "text-green-500"
 
   const handleProofread = async () => {
     if (!inputText.trim()) {
-      toast({
-        title: "Error",
+      toast.error("Empty Input", {
         description: "Please enter some text to proofread",
-        variant: "destructive",
       })
       return
     }
 
     if (!isWithinWordLimit) {
-      toast({
-        title: "Error",
-        description: `Text must be between 50-1500 words. Current: ${wordCount} words`,
-        variant: "destructive",
+      toast.error("Word Limit Exceeded", {
+        description: `Text must be between 50-1000 words. Current: ${wordCount} words`,
       })
       return
     }
@@ -74,15 +69,12 @@ export default function ProofAIPage() {
       }
 
       setResult(data)
-      toast({
-        title: "Success",
+      toast.success("Success!", {
         description: `Text processed! AI score improved by ${data.improvement_percentage}%`,
       })
     } catch (error: any) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: error.message || "An unexpected error occurred",
-        variant: "destructive",
       })
     } finally {
       setIsProcessing(false)
@@ -91,10 +83,7 @@ export default function ProofAIPage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
-    toast({
-      title: "Copied",
-      description: "Text copied to clipboard",
-    })
+    toast.success("Copied to clipboard")
   }
 
   const downloadText = (text: string) => {
@@ -105,10 +94,7 @@ export default function ProofAIPage() {
     a.download = "proofread-text.txt"
     a.click()
     URL.revokeObjectURL(url)
-    toast({
-      title: "Downloaded",
-      description: "Text file has been downloaded",
-    })
+    toast.success("Downloaded successfully")
   }
 
   return (
@@ -124,7 +110,7 @@ export default function ProofAIPage() {
           </p>
           <div className="flex items-center gap-4 mt-4">
             <Badge variant="outline" className="text-sm">
-              📝 Word Limit: 50 - 1,500 words
+              📝 Word Limit: 50 - 1,000 words
             </Badge>
             <Badge variant="outline" className="text-sm">
               🎯 AI Detection & Humanization
@@ -140,14 +126,14 @@ export default function ProofAIPage() {
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-muted-foreground" />
                 <span className={`text-sm font-medium ${wordLimitColor}`}>
-                  {wordCount} / 1,500 words
+                  {wordCount} / 1,000 words
                 </span>
               </div>
             </div>
             
             <div className="relative">
               <Textarea
-                placeholder="Paste or type your text here... (50-1500 words)"
+                placeholder="Paste or type your text here... (50-1000 words)"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 className="h-80 bg-secondary/50 border-border text-foreground placeholder:text-muted-foreground resize-none overflow-y-auto"
@@ -156,7 +142,7 @@ export default function ProofAIPage() {
                 <div className="absolute -bottom-6 left-0 text-xs text-red-500">
                   {wordCount < 50 
                     ? `Need ${50 - wordCount} more words` 
-                    : `Exceeds limit by ${wordCount - 1500} words`}
+                    : `Exceeds limit by ${wordCount - 1000} words`}
                 </div>
               )}
             </div>

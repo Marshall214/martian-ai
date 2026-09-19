@@ -17,7 +17,7 @@ sqlalchemy==2.0.36
 psycopg2-binary==2.9.9
 
 # Authentication and security
-passlib[bcrypt]==1.7.4
+bcrypt>=4.0.0
 python-jose[cryptography]==3.3.0
 
 # HTTP and API clients
@@ -29,6 +29,7 @@ transformers==4.44.2
 torch==2.4.1
 sentencepiece==0.2.0
 accelerate==0.34.2
+bitsandbytes==0.43.1
 openai==1.43.0
 
 # Data Science and ML utilities
@@ -37,7 +38,7 @@ numpy==1.26.4
 pandas==2.2.3
 
 # Audio processing
-openai-whisper==20231117
+openai-whisper
 librosa==0.10.1
 soundfile==0.12.1
 pydub==0.25.1

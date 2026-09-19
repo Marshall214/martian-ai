@@ -119,7 +119,18 @@ async def download_audio(filename: str):
     Download generated audio file
     """
     try:
-        audio_path = os.path.join("static", "audio", filename)
+        # Sanitize filename to prevent path traversal attacks (e.g. ../../.env)
+        safe_filename = os.path.basename(filename)
+        if not safe_filename or safe_filename != filename:
+            raise HTTPException(status_code=400, detail="Invalid filename")
+        
+        audio_path = os.path.join("static", "audio", safe_filename)
+        
+        # Double-check the resolved path stays within the audio directory
+        real_path = os.path.realpath(audio_path)
+        audio_dir = os.path.realpath(os.path.join("static", "audio"))
+        if not real_path.startswith(audio_dir):
+            raise HTTPException(status_code=400, detail="Invalid filename")
         
         if not os.path.exists(audio_path):
             raise HTTPException(status_code=404, detail="Audio file not found")

@@ -89,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
     setToken(null)
     localStorage.removeItem("jwt_token")
-    router.push("/login")
+    router.push("/signin")
   }
 
   if (isLoading && !isClient) {

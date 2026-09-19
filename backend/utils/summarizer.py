@@ -2,8 +2,18 @@
 from transformers import pipeline
 import re
 
-# Initialize models
-summarizer_model = pipeline("summarization", model="facebook/bart-large-cnn")
+# Lazy-loaded model singleton — avoids loading BART into memory at import time.
+# The model is only loaded when the first summarization request arrives.
+_summarizer_model = None
+
+def _get_summarizer():
+    """Get or initialize the BART-large-CNN summarization model."""
+    global _summarizer_model
+    if _summarizer_model is None:
+        print("Loading facebook/bart-large-cnn summarization model...")
+        _summarizer_model = pipeline("summarization", model="facebook/bart-large-cnn")
+        print("Summarization model loaded successfully.")
+    return _summarizer_model
 
 def count_words(text: str) -> int:
     return len(text.split())
@@ -30,12 +40,13 @@ def split_text_into_chunks(text: str, max_chunk_size: int = 900) -> list:
 def extract_key_points(text: str) -> str:
     """Extract key points and format as bullet points"""
     try:
+        model = _get_summarizer()
         chunks = split_text_into_chunks(text, 900)
         all_key_points = []
         
         for chunk in chunks:
             # Generate summary focusing on key points
-            summary = summarizer_model(
+            summary = model(
                 chunk, 
                 max_length=150, 
                 min_length=50, 
@@ -64,12 +75,13 @@ def extract_key_points(text: str) -> str:
 def generate_detailed_summary(text: str) -> str:
     """Generate comprehensive multi-paragraph summary"""
     try:
+        model = _get_summarizer()
         chunks = split_text_into_chunks(text, 900)
         summaries = []
         
         for i, chunk in enumerate(chunks):
             # Generate detailed summary for each chunk
-            summary = summarizer_model(
+            summary = model(
                 chunk,
                 max_length=250,
                 min_length=100,
@@ -99,11 +111,12 @@ def generate_detailed_summary(text: str) -> str:
 def generate_short_summary(text: str) -> str:
     """Generate more detailed but still single paragraph summary"""
     try:
+        model = _get_summarizer()
         chunks = split_text_into_chunks(text, 900)
         
         if len(chunks) == 1:
             # Single chunk - direct summarization with more detail
-            summary = summarizer_model(
+            summary = model(
                 chunks[0],
                 max_length=180,  # Increased from 120
                 min_length=80,   # Increased from 40
@@ -114,7 +127,7 @@ def generate_short_summary(text: str) -> str:
             # Multiple chunks - summarize each then combine
             chunk_summaries = []
             for chunk in chunks:
-                summary = summarizer_model(
+                summary = model(
                     chunk,
                     max_length=120,  # Increased from 80
                     min_length=60,   # Increased from 30
@@ -126,7 +139,7 @@ def generate_short_summary(text: str) -> str:
             combined_text = " ".join(chunk_summaries)
             
             # Final summarization to create detailed but concise paragraph
-            final_summary = summarizer_model(
+            final_summary = model(
                 combined_text,
                 max_length=200,  # Increased from 150
                 min_length=100,  # Increased from 50

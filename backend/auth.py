@@ -1,11 +1,13 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
+import os
 
 import bcrypt
 from jose import JWTError, jwt
 
-# Configuration for JWT
-SECRET_KEY = "your-secret-key"  # TODO: Change this to a strong, random key in production
+# Read from environment with a dev-only fallback.
+# In production / Docker, set SECRET_KEY in backend/.env or as an env var.
+SECRET_KEY = os.environ.get("SECRET_KEY", "your-secret-key-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 days
 
@@ -19,9 +21,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)  # Default 15 minutes
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)  # Default 15 minutes
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt

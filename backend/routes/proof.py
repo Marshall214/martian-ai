@@ -8,7 +8,7 @@ class ProofreadRequest(BaseModel):
     text: str
 
 @router.post("/proofread")
-async def proofread(request: ProofreadRequest):
+def proofread(request: ProofreadRequest):
     """
     Endpoint for AI-based proofreading and humanization.
     Accepts text input (50-1500 words) and returns:
@@ -16,6 +16,10 @@ async def proofread(request: ProofreadRequest):
     - Humanized version with word count
     - AI detection scores before and after
     - Improvement metrics
+
+    NOTE: This is a regular def (not async) so that FastAPI runs it in a
+    thread pool. Llama inference is a long-running synchronous operation
+    and would block the entire event loop if wrapped in async def.
     """
     try:
         result = proofread_text(request.text)

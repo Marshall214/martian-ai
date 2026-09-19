@@ -2,10 +2,9 @@ from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from utils.summarizer import summarize_text
 from utils.audio_tools import transcribe_audio
-from utils.document_processor import process_uploaded_document
+from utils.document_processor import process_uploaded_document, validate_text_length
 import tempfile
 import os
-from utils.document_processor import process_uploaded_document, validate_text_length
 from typing import Optional
 
 router = APIRouter()
@@ -85,65 +84,21 @@ async def summarize(request: SummarizeRequest):
 
 @router.post("/transcribe")
 async def transcribe(file: UploadFile = File(...)):
+    """Transcribe audio file to text using Whisper."""
     try:
-        # Save the uploaded file temporarily (or process directly)
-        file_location = f"temp_{file.filename}"
-        with open(file_location, "wb+") as file_object:
-            file_object.write(file.file.read())
-        
-        transcribed_text = transcribe_audio(file_location)
-        
-        # Clean up the temporary file
-        import os
-        os.remove(file_location)
-        
-        return {"transcribed_text": transcribed_text}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.post("/upload-document")
-async def upload_document(file: UploadFile = File(...)):
-    """
-    Upload and process document files (PDF, DOCX, TXT) for summarization
-    """
-    try:
-        # Validate file type
-        allowed_extensions = ['.pdf', '.docx', '.txt']
-        file_extension = os.path.splitext(file.filename)[1].lower()
-        
-        if file_extension not in allowed_extensions:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Invalid file type. Allowed types: {', '.join(allowed_extensions)}"
-            )
-        
-        # Create temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+        # Save to a proper temp file with cleanup
+        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename or ".wav")[1]) as tmp:
             content = await file.read()
-            temp_file.write(content)
-            temp_path = temp_file.name
+            tmp.write(content)
+            tmp_path = tmp.name
         
         try:
-            # Process the document
-            result = process_uploaded_document(temp_path)
-            
-            if not result["success"]:
-                raise HTTPException(status_code=500, detail=result["error"])
-            
-            return {
-                "text": result["text"],
-                "word_count": result["word_count"],
-                "is_valid": result["is_valid"],
-                "status_message": result["status_message"],
-                "filename": file.filename
-            }
-        
+            transcribed_text = transcribe_audio(tmp_path)
+            return {"transcribed_text": transcribed_text}
         finally:
-            # Clean up temporary file
-            if os.path.exists(temp_path):
-                os.unlink(temp_path)
-    
-    except HTTPException:
-        raise
+            # Always clean up the temp file
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to process document: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))

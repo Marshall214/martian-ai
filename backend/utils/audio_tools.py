@@ -1,27 +1,48 @@
 # utils/audio_tools.py
-import whisper
 import os
+import re
+import uuid
 import tempfile
 from pathlib import Path
-from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
-import re
 from gtts import gTTS
-import uuid
 
-# Load models
-whisper_model = whisper.load_model("base")
+# Lazy-loaded model singletons — avoids loading Whisper and BART into memory
+# at import time. Models are only loaded when the first relevant request arrives.
+_whisper_model = None
+_summarizer = None
 
-# Load text enhancement model for creating detailed summaries
-try:
-    summarizer = pipeline("summarization", model="facebook/bart-large-cnn", tokenizer="facebook/bart-large-cnn")
-except Exception as e:
-    print(f"Warning: Could not load summarization model: {e}")
-    summarizer = None
+
+def _get_whisper():
+    """Get or initialize the Whisper speech recognition model."""
+    global _whisper_model
+    if _whisper_model is None:
+        import whisper
+        print("Loading Whisper base model...")
+        _whisper_model = whisper.load_model("base")
+        print("Whisper model loaded successfully.")
+    return _whisper_model
+
+
+def _get_summarizer():
+    """Get or initialize the BART summarization model for audio summaries."""
+    global _summarizer
+    if _summarizer is None:
+        try:
+            from transformers import pipeline
+            print("Loading facebook/bart-large-cnn for audio summaries...")
+            _summarizer = pipeline("summarization", model="facebook/bart-large-cnn", tokenizer="facebook/bart-large-cnn")
+            print("Audio summarizer model loaded successfully.")
+        except Exception as e:
+            print(f"Warning: Could not load summarization model: {e}")
+            _summarizer = None
+    return _summarizer
+
 
 def transcribe_audio(file_path: str) -> str:
     """Transcribe audio file to text using Whisper"""
     try:
-        result = whisper_model.transcribe(file_path)
+        model = _get_whisper()
+        result = model.transcribe(file_path)
         return result["text"]
     except Exception as e:
         raise Exception(f"Failed to transcribe audio: {str(e)}")
